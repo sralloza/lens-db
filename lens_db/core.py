@@ -19,12 +19,17 @@ class Lens:
         dt_string = dt.strftime('%Y-%m-%d')
 
         logger.debug('Adding to lens-database: %r', dt_string)
+        Lens.add_custom(dt_string)
+
+    @staticmethod
+    def add_custom(date_string: str):
+        datetime.datetime.strptime(date_string, '%Y-%m-%d')
 
         with DBConnection() as connection:
             try:
-                connection.add(dt_string)
+                connection.add(date_string)
             except sqlite3.IntegrityError:
-                raise AlreadyAddedError('Lens %r are already in the database' % dt_string)
+                raise AlreadyAddedError('Lens %r are already in the database' % date_string)
 
     @staticmethod
     def get_last():
