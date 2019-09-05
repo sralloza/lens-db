@@ -1,23 +1,41 @@
 import datetime
+import logging
 import sqlite3
 from pathlib import Path
 
+from lens_db.exceptions import AlreadyAddedError
+
 DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
+logger = logging.getLogger(__name__)
 
 
 class Lens:
     def __init__(self):
         pass
+
     @staticmethod
     def add(delta_days=0):
         dt = datetime.datetime.today() - datetime.timedelta(days=delta_days)
+        dt_string = dt.strftime('%Y-%m-%d')
+
+        logger.debug('Adding to lens-database: %r', dt_string)
 
         with DBConnection() as connection:
-            connection.add(dt.strftime('%Y-%m-%d'))
+            try:
+                connection.add(dt_string)
+            except sqlite3.IntegrityError:
+                raise AlreadyAddedError('Lens %r are already in the database' % dt_string)
 
-    def get_last(self):
+    @staticmethod
+    def get_last():
         with DBConnection() as connection:
-            print(connection.get_last())
+            last = connection.get_last()
+
+            logger.debug('Last from database: %r', last)
+
+            if not last:
+                return None
+            return datetime.datetime.strptime(last, '%Y-%m-%d').date()
 
 
 class DBConnection:
@@ -44,7 +62,7 @@ class DBConnection:
     def ensure_table(self):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS 'lens' (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        timestamp TEXT NOT NULL UNIQUE                        
+                        timestamp TEXT NOT NULL UNIQUE   
                         )""")
 
     def add(self, time_str):
@@ -52,7 +70,7 @@ class DBConnection:
 
     def get_last(self):
         self.cursor.execute("SELECT timestamp FROM lens")
-        return self.cursor.fetchone()[0]
-
-
-Lens.add()
+        try:
+            return self.cursor.fetchall()[-1][0]
+        except TypeError:  # There are no entries
+            return None
