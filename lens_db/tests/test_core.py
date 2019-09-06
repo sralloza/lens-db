@@ -85,6 +85,19 @@ class TestLens:
         db_mock.return_value.__enter__.return_value.get_last.assert_called_once_with()
         db_mock.return_value.__exit__.assert_called()
 
+    @mock.patch('lens_db.core.DBConnection')
+    def test_list(self, db_mock):
+        days = ['2019-12-11', '2019-12-15', '2019-12-21', '2019-12-22', '2019-12-25', '2019-12-27']
+        db_mock.return_value.__enter__.return_value.list.return_value = days
+
+        days_list = Lens.list()
+
+        assert days_list == days
+
+        db_mock.return_value.__enter__.assert_called()
+        db_mock.return_value.__enter__.return_value.list.assert_called_once_with()
+        db_mock.return_value.__exit__.assert_called()
+
 
 class TestDBConnection:
 

@@ -46,6 +46,11 @@ class Lens:
                 return None
             return datetime.strptime(last, '%Y-%m-%d').date()
 
+    @staticmethod
+    def list():
+        with DBConnection() as connection:
+            return connection.list()
+
 
 class DBConnection:
     def __init__(self):
