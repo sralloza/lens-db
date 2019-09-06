@@ -78,7 +78,7 @@ class DBConnection:
         self.cursor.execute("INSERT INTO lens VALUES (NULL, ?)", [time_str])
 
     def get_last(self):
-        self.cursor.execute("SELECT timestamp FROM lens")
+        self.cursor.execute("SELECT timestamp FROM lens ORDER BY timestamp")
         try:
             return self.cursor.fetchall()[-1][0]
         except TypeError:  # There are no entries

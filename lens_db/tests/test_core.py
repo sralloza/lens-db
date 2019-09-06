@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from lens_db.core import Lens
+from lens_db.core import Lens, DBConnection
 from lens_db.exceptions import InvalidDateError
 
 DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
@@ -86,20 +86,106 @@ class TestLens:
         db_mock.return_value.__exit__.assert_called()
 
 
-@pytest.mark.skip
 class TestDBConnection:
-    def test___init__(self): ...
 
-    def test___enter__(self): ...
+    @mock.patch('lens_db.core.DBConnection.ensure_table')
+    @mock.patch('sqlite3.connect')
+    def test_init(self, connect_mock, table_mock):
+        DBConnection()
 
-    def test___exit__(self): ...
+        connect_mock.assert_called()
+        connect_mock.return_value.cursor.assert_called_once()
+        table_mock.assert_called_once()
 
-    def test_commit(self): ...
+    @mock.patch('lens_db.core.DBConnection.commit')
+    @mock.patch('lens_db.core.DBConnection.close')
+    @mock.patch('sqlite3.connect')
+    def test_context_manager(self, connect_mock, close_mock, commit_mock):
+        assert hasattr(DBConnection, '__enter__')
+        assert hasattr(DBConnection, '__exit__')
 
-    def test_close(self): ...
+        with DBConnection():
+            pass
 
-    def test_ensure_table(self): ...
+        connect_mock.assert_called()
+        close_mock.assert_called()
+        commit_mock.assert_called()
 
-    def test_add(self): ...
+    @mock.patch('sqlite3.connect')
+    def test_enter(self, connect_mock):
+        connection = DBConnection()
+        enter = connection.__enter__()
 
-    def test_get_last(self): ...
+        assert connection == enter
+        connect_mock.assert_called()
+
+    @mock.patch('lens_db.core.DBConnection.commit')
+    @mock.patch('lens_db.core.DBConnection.close')
+    @mock.patch('sqlite3.connect')
+    def test_exit(self, connect_mock, close_mock, commit_mock):
+        connection = DBConnection()
+        connection.__exit__(None, None, None)
+
+        connect_mock.assert_called()
+        close_mock.assert_called()
+        commit_mock.assert_called()
+
+    @mock.patch('sqlite3.connect')
+    def test_commit(self, connect_mock):
+        connection = DBConnection()
+        connection.commit()
+
+        connect_mock.return_value.commit.assert_called()
+
+    @mock.patch('sqlite3.connect')
+    def test_close(self, connect_mock):
+        cursor_mock = connect_mock.return_value.cursor
+
+        connection = DBConnection()
+        connection.close()
+
+        connect_mock.return_value.close.assert_called_once()
+        cursor_mock.return_value.close.assert_called_once()
+
+    @mock.patch('sqlite3.connect')
+    def test_ensure_table(self, connect_mock):
+        connection = DBConnection()
+        connection.ensure_table()
+
+        cursor = connect_mock.return_value.cursor
+        call_arg = cursor.return_value.execute.call_args[0][0]
+
+        assert "CREATE TABLE IF NOT EXISTS 'lens'" in call_arg
+        assert 'id' in call_arg
+        assert 'timestamp' in call_arg
+
+    @mock.patch('sqlite3.connect')
+    def test_add(self, connect_mock):
+        connection = DBConnection()
+        connection.add('hello')
+
+        cursor = connect_mock.return_value.cursor
+        cursor.return_value.execute.assert_called_with('INSERT INTO lens VALUES (NULL, ?)',
+                                                       ['hello'])
+
+    @pytest.mark.parametrize('full', [True, False])
+    @mock.patch('sqlite3.connect')
+    def test_get_last(self, connect_mock, full):
+        cursor = connect_mock.return_value.cursor
+
+        if full:
+            cursor.return_value.fetchall.return_value = [['2019-10-02'], ['2019-01-01'],
+                                                         ['2018-02-02']]
+        else:
+            cursor.return_value.fetchall.side_effect = TypeError
+
+        connection = DBConnection()
+        last = connection.get_last()
+
+        if full:
+            assert last == '2018-02-02'
+        else:
+            assert last is None
+
+        cursor.return_value.execute.assert_called_with(
+            'SELECT timestamp FROM lens ORDER BY timestamp')
