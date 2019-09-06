@@ -6,3 +6,5 @@ venv/
 
 lens.db
 sandbox.py
+
+*.log
