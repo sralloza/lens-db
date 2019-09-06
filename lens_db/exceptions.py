@@ -4,3 +4,7 @@ class BaseLensDBError(Exception):
 
 class AlreadyAddedError(BaseLensDBError):
     """Lens already added error."""
+
+
+class InvalidDateError(BaseLensDBError):
+    """Invalid date error."""

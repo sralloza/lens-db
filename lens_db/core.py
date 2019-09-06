@@ -1,9 +1,10 @@
-import datetime
 import logging
 import sqlite3
+from datetime import datetime, timedelta
 from pathlib import Path
 
-from lens_db.exceptions import AlreadyAddedError
+from lens_db.exceptions import AlreadyAddedError, InvalidDateError
+from lens_db.utils import today_date
 
 DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ class Lens:
 
     @staticmethod
     def add(delta_days=0):
-        dt = datetime.datetime.today() - datetime.timedelta(days=delta_days)
+        dt = today_date() - timedelta(days=delta_days)
         dt_string = dt.strftime('%Y-%m-%d')
 
         logger.debug('Adding to lens-database: %r', dt_string)
@@ -23,7 +24,10 @@ class Lens:
 
     @staticmethod
     def add_custom(date_string: str):
-        datetime.datetime.strptime(date_string, '%Y-%m-%d')
+        try:
+            datetime.strptime(date_string, '%Y-%m-%d')
+        except ValueError:
+            raise InvalidDateError('%r is not a valid date format (use 2019-12-31)' % date_string)
 
         with DBConnection() as connection:
             try:
@@ -40,7 +44,7 @@ class Lens:
 
             if not last:
                 return None
-            return datetime.datetime.strptime(last, '%Y-%m-%d').date()
+            return datetime.strptime(last, '%Y-%m-%d').date()
 
 
 class DBConnection:
