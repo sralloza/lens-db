@@ -1,6 +1,6 @@
 import logging
-
+from .config import LOGGING_PATH
 logging.basicConfig(
-    # filename=Path(__file__).parent.parent / 'flask-app.log',
+    filename=LOGGING_PATH,
     level=logging.DEBUG,
     format='%(asctime)s] %(levelname)s - %(module)s:%(lineno)s - %(message)s')
