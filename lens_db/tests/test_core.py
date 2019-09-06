@@ -169,23 +169,37 @@ class TestDBConnection:
                                                        ['hello'])
 
     @pytest.mark.parametrize('full', [True, False])
+    @mock.patch('lens_db.core.DBConnection.list')
     @mock.patch('sqlite3.connect')
-    def test_get_last(self, connect_mock, full):
-        cursor = connect_mock.return_value.cursor
+    def test_get_last(self, connect_mock, list_mock, full):
+        days = ['2019-12-11', '2019-12-15', '2019-12-21', '2019-12-22', '2019-12-25', '2019-12-27']
 
         if full:
-            cursor.return_value.fetchall.return_value = [['2019-10-02'], ['2019-01-01'],
-                                                         ['2018-02-02']]
+            list_mock.return_value = sorted(days)
         else:
-            cursor.return_value.fetchall.side_effect = TypeError
+            list_mock.side_effect = IndexError
 
         connection = DBConnection()
         last = connection.get_last()
 
         if full:
-            assert last == '2018-02-02'
+            assert last == '2019-12-27'
         else:
             assert last is None
 
-        cursor.return_value.execute.assert_called_with(
-            'SELECT timestamp FROM lens ORDER BY timestamp')
+        list_mock.assert_called_once()
+        connect_mock.assert_called()
+
+    @mock.patch('sqlite3.connect')
+    def test_list(self, connect_mock):
+        days = [('2019-12-11',), ('2019-12-15',), ('2019-12-21',), ('2019-12-22',),
+                ('2019-12-25',), ('2019-12-27',)]
+        expected = [x[0] for x in days]
+        cursor = connect_mock.return_value.cursor
+
+        cursor.return_value.fetchall.return_value = sorted(days)
+
+        connection = DBConnection()
+        days_list = connection.list()
+
+        assert days_list == expected
