@@ -3,8 +3,8 @@ import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from lens_db.exceptions import AlreadyAddedError, InvalidDateError
-from lens_db.utils import today_date
+from .exceptions import AlreadyAddedError, InvalidDateError
+from .utils import today_date
 
 DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
 logger = logging.getLogger(__name__)
