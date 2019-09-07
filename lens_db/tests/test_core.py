@@ -1,20 +1,10 @@
 from datetime import date
-from pathlib import Path
 from unittest import mock
 
 import pytest
 
 from lens_db.core import Lens, DBConnection
 from lens_db.exceptions import InvalidDateError
-
-DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
-
-
-class TestModuleAttributes:
-    def test_database_path(self):
-        from lens_db.core import DATABASE_PATH
-        assert isinstance(DATABASE_PATH, Path)
-        assert DATABASE_PATH.name == 'lens.db'
 
 
 class TestLens:

@@ -1,19 +1,15 @@
 import logging
 import sqlite3
 from datetime import datetime, timedelta
-from pathlib import Path
 
+from lens_db.config import DATABASE_PATH
 from .exceptions import AlreadyAddedError, InvalidDateError
 from .utils import today_date
 
-DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'
 logger = logging.getLogger(__name__)
 
 
 class Lens:
-    def __init__(self):
-        pass
-
     @staticmethod
     def add(delta_days=0):
         dt = today_date() - timedelta(days=delta_days)

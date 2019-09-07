@@ -8,3 +8,4 @@ LENS_DURABILITY_DELTA = timedelta(days=LENS_DURABILITY)
 ADMIN_EMAIL = 'sralloza@gmail.com'
 
 LOGGING_PATH = Path(__file__).parent.parent / 'lens-db.log'
+DATABASE_PATH = Path(__file__).parent.parent / 'lens.db'

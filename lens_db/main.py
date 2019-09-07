@@ -1,10 +1,10 @@
 import argparse
 import sys
 
-from .exceptions import BaseLensDBError
-from .utils import exception_exit
 from .core import Lens
+from .exceptions import BaseLensDBError
 from .scanner import scan
+from .utils import exception_exit
 
 
 def get_options(args=None):
@@ -18,11 +18,13 @@ def get_options(args=None):
 
     return parser.parse_args(args)
 
+
 def main():
     try:
         return _main()
     except BaseLensDBError as exc:
         exception_exit(exc)
+
 
 def _main():
     if len(sys.argv) == 1:
