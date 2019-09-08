@@ -12,6 +12,7 @@ class ScanCode(Enum):
     not_sent = auto()
     day_after_tomorrow = auto()
     tomorrow = auto()
+    today = auto()
     expired = auto()
 
 
@@ -33,7 +34,7 @@ class TestScan:
         (13, ScanCode.not_sent),
         (14, ScanCode.day_after_tomorrow),
         (15, ScanCode.tomorrow),
-        (16, ScanCode.expired),
+        (16, ScanCode.today),
         (17, ScanCode.expired),
         (20, ScanCode.expired),
         (21, ScanCode.expired),
@@ -61,6 +62,9 @@ class TestScan:
         elif expect == ScanCode.tomorrow:
             send_email.assert_called_once()
             assert 'sending email (tomorrow)\n' in caplog.text
+        elif expect == ScanCode.today:
+            send_email.assert_called_once()
+            assert 'sending email (today)\n' in caplog.text
         elif expect == ScanCode.expired:
             send_email.assert_called_once()
             assert 'sending email (expired)\n' in caplog.text
