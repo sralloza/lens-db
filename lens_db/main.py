@@ -52,4 +52,6 @@ def _main():
 
     if options.last:
         last = Lens.get_last()
+        if last is None:
+            exit('No lens in database')
         exit('Last lens opened on %r' % last.strftime('%Y-%m-%d'))
