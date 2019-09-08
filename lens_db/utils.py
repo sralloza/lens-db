@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Type
 
 
 def today_date():
@@ -7,11 +6,18 @@ def today_date():
     return datetime.today().date()
 
 
-def exception_exit(exception: Type[Exception]):
+def exception_exit(exception):
     """Exists the progam showing an exception.
 
     Args:
-        Exception: Exception to show.
+        exception: Exception to show.
+
+    Raises:
+        TypeError: if exception is not a subclass of Exception.
 
     """
+
+    if not issubclass(exception, Exception):
+        raise TypeError('exception should be a subclass of Exception')
+
     exit('%s: %s' % (exception.__class__.__name__, ', '.join(exception.args)))
