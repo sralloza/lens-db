@@ -84,7 +84,7 @@ class DBConnection:
     """Represents a sqlite database connection."""
 
     def __init__(self):
-        self.connection = sqlite3.connect(DATABASE_PATH)
+        self.connection = sqlite3.connect(DATABASE_PATH.as_posix())
         self.cursor = self.connection.cursor()
 
         self.ensure_table()
