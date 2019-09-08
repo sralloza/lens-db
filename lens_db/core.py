@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 date_or_none = Union[date, None]
 list_of_str = List[str]
-list_of_dates = List[date]
+
+__all__ = ['Lens', 'DBConnection']
 
 
 class Lens:
@@ -74,7 +75,7 @@ class Lens:
             return datetime.strptime(last, '%Y-%m-%d').date()
 
     @staticmethod
-    def list() -> list_of_dates:
+    def list() -> list_of_str:
         """Returns a list of every timestamp registered in the database."""
         with DBConnection() as connection:
             return connection.list()

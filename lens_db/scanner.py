@@ -9,6 +9,8 @@ from .utils import today_date
 
 logger = logging.getLogger(__name__)
 
+__all__ = ['scan']
+
 
 def scan():
     """Scanner of the program. If it is needed, an email will be sent."""
@@ -23,7 +25,7 @@ def scan():
 
     if delta == LENS_DURABILITY_DELTA + timedelta(days=1):
         logger.debug('Delta == %s days, sending email (today)', LENS_DURABILITY_DELTA.days + 1)
-        message = 'Hay que cambiar hoy las lentillas, el último cambio fue el %s (%s días)' %(
+        message = 'Hay que cambiar hoy las lentillas, el último cambio fue el %s (%s días)' % (
             last, delta.days)
         return send_email(ADMIN_EMAIL, 'Cambiar lentillas hoy', message, name='Lens-db')
     if delta > LENS_DURABILITY_DELTA:

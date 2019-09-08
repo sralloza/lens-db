@@ -2,6 +2,8 @@ from logging import basicConfig, DEBUG
 
 from .config import LOGGING_PATH
 
+__all__ = []
+
 basicConfig(
     filename=LOGGING_PATH,
     level=DEBUG,

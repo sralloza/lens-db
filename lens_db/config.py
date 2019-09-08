@@ -1,7 +1,8 @@
 from datetime import timedelta
 from pathlib import Path
 
-__all__ = ['LENS_DURABILITY', 'LENS_DURABILITY_DELTA', 'ADMIN_EMAIL']
+__all__ = ['LENS_DURABILITY', 'LENS_DURABILITY_DELTA', 'ADMIN_EMAIL', 'LOGGING_PATH',
+           'DATABASE_PATH']
 
 LENS_DURABILITY = 15  # In days
 LENS_DURABILITY_DELTA = timedelta(days=LENS_DURABILITY)

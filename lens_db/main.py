@@ -6,6 +6,8 @@ from .exceptions import BaseLensDBError
 from .scanner import scan
 from .utils import exception_exit
 
+__all__ = ['main', 'get_options']
+
 
 def get_options(args=None):
     """Returns the CLI arguments parsed."""
