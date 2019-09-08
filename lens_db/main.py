@@ -8,6 +8,7 @@ from .utils import exception_exit
 
 
 def get_options(args=None):
+    """Returns the CLI arguments parsed."""
     parser = argparse.ArgumentParser('lens-db')
     parser.add_argument('-now', '-today', action='store_true', help='open lens today')
     parser.add_argument('-days', type=int, help='days after lens were opened', metavar='days')
@@ -20,6 +21,7 @@ def get_options(args=None):
 
 
 def main():
+    """Main function of the program."""
     try:
         return _main()
     except BaseLensDBError as exc:
@@ -27,6 +29,7 @@ def main():
 
 
 def _main():
+    """Secondary function of the program."""
     if len(sys.argv) == 1:
         sys.argv.append('-h')
 

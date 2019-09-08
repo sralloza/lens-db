@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def scan():
+    """Scanner of the program. If it is needed, an email will be sent."""
     last = Lens.get_last()
     if not last:
         logger.debug('No entries')
