@@ -7,4 +7,5 @@ __all__ = []
 basicConfig(
     filename=LOGGING_PATH,
     level=DEBUG,
-    format='%(asctime)s] %(levelname)s - %(module)s:%(lineno)s - %(message)s')
+    format="[%(asctime)s] %(levelname)s - %(module)s:%(lineno)s - %(message)s",
+)

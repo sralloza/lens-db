@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 date_or_none = Union[date, None]
 list_of_str = List[str]
 
-__all__ = ['Lens', 'DBConnection']
+__all__ = ["Lens", "DBConnection"]
 
 
 class Lens:
@@ -33,9 +33,9 @@ class Lens:
 
         """
         dt = today_date() - timedelta(days=delta_days)
-        dt_string = dt.strftime('%Y-%m-%d')
+        dt_string = dt.strftime("%Y-%m-%d")
 
-        logger.debug('Adding to lens-database: %r', dt_string)
+        logger.debug("Adding to lens-database: %r", dt_string)
         Lens.add_custom(dt_string)
 
     @staticmethod
@@ -51,15 +51,19 @@ class Lens:
 
         """
         try:
-            datetime.strptime(date_string, '%Y-%m-%d')
+            datetime.strptime(date_string, "%Y-%m-%d")
         except ValueError:
-            raise InvalidDateError('%r is not a valid date format (use 2019-12-31)' % date_string)
+            raise InvalidDateError(
+                "%r is not a valid date format (use 2019-12-31)" % date_string
+            )
 
         with DBConnection() as connection:
             try:
                 connection.add(date_string)
             except sqlite3.IntegrityError:
-                raise AlreadyAddedError('Lens %r are already in the database' % date_string)
+                raise AlreadyAddedError(
+                    "Lens %r are already in the database" % date_string
+                )
 
     @staticmethod
     def get_last() -> date_or_none:
@@ -68,11 +72,11 @@ class Lens:
         with DBConnection() as connection:
             last = connection.get_last()
 
-            logger.debug('Last from database: %r', last)
+            logger.debug("Last from database: %r", last)
 
             if not last:
                 return None
-            return datetime.strptime(last, '%Y-%m-%d').date()
+            return datetime.strptime(last, "%Y-%m-%d").date()
 
     @staticmethod
     def list() -> list_of_str:
@@ -108,10 +112,12 @@ class DBConnection:
 
     def ensure_table(self):
         """Creates the table 'lens' if it does not exist."""
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS 'lens' (
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS 'lens' (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        timestamp TEXT NOT NULL UNIQUE   
-                        )""")
+                        timestamp TEXT NOT NULL UNIQUE
+                        )"""
+        )
 
     def add(self, time_str):
         """Adds the time_str to the database.

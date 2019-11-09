@@ -1,6 +1,6 @@
 from datetime import datetime
 
-__all__ = ['today_date', 'exception_exit']
+__all__ = ["today_date", "exception_exit"]
 
 
 def today_date():
@@ -19,7 +19,10 @@ def exception_exit(exception):
 
     """
 
-    if not issubclass(exception, Exception):
-        raise TypeError('exception should be a subclass of Exception')
+    try:
+        if not issubclass(exception, Exception):
+            raise TypeError("exception should be a subclass of Exception")
+    except TypeError:
+        pass
 
-    exit('%s: %s' % (exception.__class__.__name__, ', '.join(exception.args)))
+    exit("%s: %s" % (exception.__class__.__name__, ", ".join(exception.args)))

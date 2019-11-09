@@ -1,6 +1,7 @@
 # Specify filepatterns you want git to ignore.
 
 .idea/
+.vscode/
 __pycache__/
 venv/
 

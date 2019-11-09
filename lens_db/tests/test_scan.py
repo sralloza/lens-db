@@ -19,9 +19,9 @@ class ScanCode(Enum):
 class TestScan:
     @pytest.fixture
     def mocks(self):
-        get_last = mock.patch('lens_db.scanner.Lens.get_last').start()
-        today_date = mock.patch('lens_db.scanner.today_date').start()
-        send_email = mock.patch('lens_db.scanner.send_email').start()
+        get_last = mock.patch("lens_db.scanner.Lens.get_last").start()
+        today_date = mock.patch("lens_db.scanner.today_date").start()
+        send_email = mock.patch("lens_db.scanner.send_email").start()
 
         yield get_last, today_date, send_email
 
@@ -40,7 +40,7 @@ class TestScan:
         (21, ScanCode.expired),
     )
 
-    @pytest.mark.parametrize('days, expect', scan_data)
+    @pytest.mark.parametrize("days, expect", scan_data)
     def test_scan(self, mocks, days, expect, caplog):
         get_last, today_date, send_email = mocks
         if expect != ScanCode.no_entries:
@@ -53,18 +53,18 @@ class TestScan:
         scan()
 
         if expect == ScanCode.no_entries:
-            assert 'No entries\n' in caplog.text
+            assert "No entries\n" in caplog.text
         elif expect == ScanCode.not_sent:
             send_email.assert_not_called()
         elif expect == ScanCode.day_after_tomorrow:
             send_email.assert_called_once()
-            assert 'sending email (day after tomorrow)\n' in caplog.text
+            assert "sending email (day after tomorrow)\n" in caplog.text
         elif expect == ScanCode.tomorrow:
             send_email.assert_called_once()
-            assert 'sending email (tomorrow)\n' in caplog.text
+            assert "sending email (tomorrow)\n" in caplog.text
         elif expect == ScanCode.today:
             send_email.assert_called_once()
-            assert 'sending email (today)\n' in caplog.text
+            assert "sending email (today)\n" in caplog.text
         elif expect == ScanCode.expired:
             send_email.assert_called_once()
-            assert 'sending email (expired)\n' in caplog.text
+            assert "sending email (expired)\n" in caplog.text

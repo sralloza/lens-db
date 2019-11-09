@@ -10,22 +10,27 @@ def test_today_date():
 
 
 exceptions = (
-    (ValueError, 'Invalid path'),
-    (TypeError, ('Invalid type', 'Expected int')),
-    (ImportError, 'Module not found: math')
+    (ValueError, "Invalid path"),
+    (TypeError, ("Invalid type", "Expected int")),
+    (ImportError, "Module not found: math"),
 )
 
 
-@pytest.mark.parametrize('exception, args', exceptions)
+@pytest.mark.parametrize("exception, args", exceptions)
 def test_exception_exit(exception, args):
     if not isinstance(args, str):
-        message = ', '.join(args)
+        message = ", ".join(args)
     else:
         message = args
-        args = (args, )
+        args = (args,)
 
     with pytest.raises(SystemExit, match=message):
         try:
             raise exception(*args)
         except Exception as err:
             exception_exit(err)
+
+
+def test_exception_exit_wrong():
+    with pytest.raises(TypeError):
+        exception_exit(Exception)
