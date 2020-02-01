@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from lens_db.scanner import scan
+from lens_db.src.scanner import scan
 
 
 class ScanCode(Enum):
@@ -19,9 +19,9 @@ class ScanCode(Enum):
 class TestScan:
     @pytest.fixture
     def mocks(self):
-        get_last = mock.patch("lens_db.scanner.Lens.get_last").start()
-        today_date = mock.patch("lens_db.scanner.today_date").start()
-        send_email = mock.patch("lens_db.scanner.send_email").start()
+        get_last = mock.patch("lens_db.src.scanner.Lens.get_last").start()
+        today_date = mock.patch("lens_db.src.scanner.today_date").start()
+        send_email = mock.patch("lens_db.src.scanner.send_email").start()
 
         yield get_last, today_date, send_email
 
