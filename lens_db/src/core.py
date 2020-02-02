@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime, timedelta, date
 from typing import Union, Optional, List
 
-from lens_db.config import DATABASE_PATH
+from .config import DATABASE_PATH
 from .exceptions import AlreadyAddedError, InvalidDateError
 from .utils import today_date
 

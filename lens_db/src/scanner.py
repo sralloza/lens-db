@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from allo_mail import send_email
 
-from .config import ADMIN_EMAIL, LENS_DURABILITY_DELTA
+from .config import ADMIN_EMAIL, DISABLED, LENS_DURABILITY_DELTA
 from .core import Lens
 from .utils import today_date
 
@@ -14,6 +14,11 @@ __all__ = ["scan"]
 
 def scan():
     """Scanner of the program. If it is needed, an email will be sent."""
+
+    if DISABLED:
+        logger.info("DISABLED flag is active, cancelling scan")
+        return
+
     last = Lens.get_last()
     if not last:
         logger.debug("No entries")

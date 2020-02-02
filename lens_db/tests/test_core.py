@@ -3,8 +3,8 @@ from unittest import mock
 
 import pytest
 
-from lens_db.core import Lens, DBConnection
-from lens_db.exceptions import InvalidDateError
+from lens_db.src.core import Lens, DBConnection
+from lens_db.src.exceptions import InvalidDateError
 
 
 class TestLens:
@@ -18,8 +18,8 @@ class TestLens:
     )
 
     @pytest.mark.parametrize("days, day_str", days_str)
-    @mock.patch("lens_db.core.today_date", return_value=date(2019, 12, 31))
-    @mock.patch("lens_db.core.Lens.add_custom")
+    @mock.patch("lens_db.src.core.today_date", return_value=date(2019, 12, 31))
+    @mock.patch("lens_db.src.core.Lens.add_custom")
     def test_add(self, add_custom, today_date, days, day_str):
         Lens.add(days)
         today_date.assert_called_once_with()
@@ -37,7 +37,7 @@ class TestLens:
     )
 
     @pytest.mark.parametrize("date_str, is_ok", add_custom_data)
-    @mock.patch("lens_db.core.DBConnection")
+    @mock.patch("lens_db.src.core.DBConnection")
     def test_add_custom(self, db_mock, date_str, is_ok):
         if is_ok:
             Lens.add_custom(date_str)
@@ -64,7 +64,7 @@ class TestLens:
     )
 
     @pytest.mark.parametrize("date_returned, expected", get_last_data)
-    @mock.patch("lens_db.core.DBConnection")
+    @mock.patch("lens_db.src.core.DBConnection")
     def test_get_last(self, db_mock, date_returned, expected):
         db_mock.return_value.__enter__.return_value.get_last.return_value = (
             date_returned
@@ -78,7 +78,7 @@ class TestLens:
         db_mock.return_value.__enter__.return_value.get_last.assert_called_once_with()
         db_mock.return_value.__exit__.assert_called()
 
-    @mock.patch("lens_db.core.DBConnection")
+    @mock.patch("lens_db.src.core.DBConnection")
     def test_list(self, db_mock):
         days = [
             "2019-12-11",
@@ -100,7 +100,7 @@ class TestLens:
 
 
 class TestDBConnection:
-    @mock.patch("lens_db.core.DBConnection.ensure_table")
+    @mock.patch("lens_db.src.core.DBConnection.ensure_table")
     @mock.patch("sqlite3.connect")
     def test_init(self, connect_mock, table_mock):
         DBConnection()
@@ -109,8 +109,8 @@ class TestDBConnection:
         connect_mock.return_value.cursor.assert_called_once()
         table_mock.assert_called_once()
 
-    @mock.patch("lens_db.core.DBConnection.commit")
-    @mock.patch("lens_db.core.DBConnection.close")
+    @mock.patch("lens_db.src.core.DBConnection.commit")
+    @mock.patch("lens_db.src.core.DBConnection.close")
     @mock.patch("sqlite3.connect")
     def test_context_manager(self, connect_mock, close_mock, commit_mock):
         assert hasattr(DBConnection, "__enter__")
@@ -131,8 +131,8 @@ class TestDBConnection:
         assert connection == enter
         connect_mock.assert_called()
 
-    @mock.patch("lens_db.core.DBConnection.commit")
-    @mock.patch("lens_db.core.DBConnection.close")
+    @mock.patch("lens_db.src.core.DBConnection.commit")
+    @mock.patch("lens_db.src.core.DBConnection.close")
     @mock.patch("sqlite3.connect")
     def test_exit(self, connect_mock, close_mock, commit_mock):
         connection = DBConnection()
@@ -182,7 +182,7 @@ class TestDBConnection:
         )
 
     @pytest.mark.parametrize("full", [True, False])
-    @mock.patch("lens_db.core.DBConnection.list")
+    @mock.patch("lens_db.src.core.DBConnection.list")
     @mock.patch("sqlite3.connect")
     def test_get_last(self, connect_mock, list_mock, full):
         days = [

@@ -1,6 +1,6 @@
 import pytest
 
-from lens_db.main import get_options
+from lens_db.src.main import get_options
 
 
 def modified_get_options(string: str):

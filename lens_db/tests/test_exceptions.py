@@ -1,6 +1,6 @@
 import pytest
 
-from lens_db.exceptions import BaseLensDBError, AlreadyAddedError, InvalidDateError
+from lens_db.src.exceptions import BaseLensDBError, AlreadyAddedError, InvalidDateError
 
 
 def test_base_lens_db_error():

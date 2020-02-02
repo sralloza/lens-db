@@ -1,6 +1,6 @@
 from logging import basicConfig, DEBUG
 
-from .config import LOGGING_PATH
+from .src.config import LOGGING_PATH
 
 __all__ = []
 
