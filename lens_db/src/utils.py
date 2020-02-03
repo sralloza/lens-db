@@ -19,10 +19,13 @@ def exception_exit(exception):
 
     """
 
+
     try:
-        if not issubclass(exception, Exception):
-            raise TypeError("exception should be a subclass of Exception")
-    except TypeError:
+        raise exception
+    except TypeError as exc:
+        if exc.args == ("exceptions must derive from BaseException", ):
+            raise TypeError("exception should be a subclass of Exception") from exc
+    except Exception:
         pass
 
     exit("%s: %s" % (exception.__class__.__name__, ", ".join(exception.args)))

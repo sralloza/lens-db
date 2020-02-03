@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from lens_db.utils import today_date, exception_exit
+from lens_db.src.utils import today_date, exception_exit
 
 
 def test_today_date():
@@ -32,5 +32,5 @@ def test_exception_exit(exception, args):
 
 
 def test_exception_exit_wrong():
-    with pytest.raises(TypeError):
-        exception_exit(Exception)
+    with pytest.raises(TypeError, match="exception should be a subclass of Exception"):
+        exception_exit("hi")
