@@ -68,3 +68,16 @@ class TestScan:
         elif expect == ScanCode.expired:
             send_email.assert_called_once()
             assert "sending email (expired)\n" in caplog.text
+
+
+    @mock.patch("lens_db.src.scanner.DISABLED", True)
+    def test_disabled(self, mocks, caplog):
+        get_last, today_date, send_email = mocks
+
+        scan()
+
+        get_last.assert_not_called()
+        today_date.assert_not_called()
+        send_email.assert_not_called()
+
+        assert "DISABLED flag is active, cancelling scan\n" in caplog.text
