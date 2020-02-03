@@ -1,10 +1,11 @@
 from datetime import date
+from sqlite3 import IntegrityError
 from unittest import mock
 
 import pytest
 
-from lens_db.src.core import Lens, DBConnection
-from lens_db.src.exceptions import InvalidDateError
+from lens_db.src.core import DBConnection, Lens
+from lens_db.src.exceptions import AlreadyAddedError, InvalidDateError
 
 
 class TestLens:
@@ -50,6 +51,20 @@ class TestLens:
         db_mock.return_value.__enter__.assert_called()
         db_mock.return_value.__enter__.return_value.add.assert_called_once_with(
             date_str
+        )
+        db_mock.return_value.__exit__.assert_called()
+
+    @mock.patch("lens_db.src.core.DBConnection")
+    def test_add_custom_duplicate(self, db_mock):
+        db_mock.return_value.__enter__.return_value.add.side_effect = IntegrityError
+
+        with pytest.raises(AlreadyAddedError, match="Lens '2020-02-03' are already"):
+            Lens.add_custom("2020-02-03")
+
+        db_mock.assert_called()
+        db_mock.return_value.__enter__.assert_called()
+        db_mock.return_value.__enter__.return_value.add.assert_called_once_with(
+            "2020-02-03"
         )
         db_mock.return_value.__exit__.assert_called()
 
