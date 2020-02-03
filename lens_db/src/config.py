@@ -14,6 +14,6 @@ LENS_DURABILITY = 15  # In days
 LENS_DURABILITY_DELTA = timedelta(days=LENS_DURABILITY)
 ADMIN_EMAIL = "sralloza@gmail.com"
 
-LOGGING_PATH = Path(__file__).parent.parent / "lens-db.log"
-DATABASE_PATH = Path(__file__).parent.parent / "lens.db"
-DISABLED = Path(__file__).parent.parent.joinpath("disabled").exists()
+LOGGING_PATH = Path(__file__).parent.parent.parent / "lens-db.log"
+DATABASE_PATH = Path(__file__).parent.parent.parent / "lens.db"
+DISABLED = Path(__file__).parent.parent.parent.joinpath("disabled").exists()
