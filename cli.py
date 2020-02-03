@@ -1,4 +1,4 @@
-from lens_db.main import main
+from lens_db.src.main import main
 
 if __name__ == "__main__":
     main()
