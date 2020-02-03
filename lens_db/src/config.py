@@ -7,6 +7,7 @@ __all__ = [
     "ADMIN_EMAIL",
     "LOGGING_PATH",
     "DATABASE_PATH",
+    "DISABLED"
 ]
 
 LENS_DURABILITY = 15  # In days
