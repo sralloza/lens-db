@@ -9,6 +9,10 @@ from lens_db.src.exceptions import AlreadyAddedError, InvalidDateError
 
 
 class TestLens:
+    def test_instance(self):
+        with pytest.raises(NotImplementedError, match="Lens shouldn't be instanciated"):
+            Lens()
+
     days_str = (
         (4, "2019-12-27"),
         (6, "2019-12-25"),
