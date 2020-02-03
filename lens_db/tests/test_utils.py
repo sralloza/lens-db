@@ -32,5 +32,5 @@ def test_exception_exit(exception, args):
 
 
 def test_exception_exit_wrong():
-    with pytest.raises(TypeError):
-        exception_exit(Exception)
+    with pytest.raises(TypeError, match="exception should be a subclass of Exception"):
+        exception_exit("hi")
