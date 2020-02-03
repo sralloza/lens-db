@@ -2,6 +2,9 @@ from datetime import timedelta
 from pathlib import Path
 
 
+# TODO: add real tests for paths
+
+
 def test_lens_durability():
     from lens_db.src.config import LENS_DURABILITY
 
@@ -34,3 +37,9 @@ def test_database_path():
     assert isinstance(DATABASE_PATH, Path)
     assert DATABASE_PATH.suffix == ".db"
     assert DATABASE_PATH.name == "lens.db"
+
+
+def test_disabled():
+    from lens_db.src.config import DISABLED
+
+    assert isinstance(DISABLED, bool)
