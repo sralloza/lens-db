@@ -1,4 +1,4 @@
-## [1.1.0] 2020-02-02
+## [1.1.0] 2020-02-03
 ### Added
 * Add way to disable scan: create a file named `disabled` at the root dir (next to `cli.py`, `requiremens.txt` and `CHANGELOG.md`).
 
