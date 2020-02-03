@@ -9,3 +9,5 @@ lens.db
 sandbox.py
 
 *.log
+
+disabled
