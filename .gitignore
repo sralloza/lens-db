@@ -5,6 +5,7 @@
 __pycache__/
 venv/
 
+lens_db/data/
 lens.db
 sandbox.py
 
