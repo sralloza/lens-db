@@ -26,10 +26,10 @@ def send_email(destinations, subject, message, name=None, retries=5):
     """
 
     if destinations is None or subject is None or message is None:
-        raise TypeError(f"destinations, subject and message can not be None")
+        raise TypeError("destinations, subject and message can not be None")
 
     if not isinstance(retries, int):
-        raise TypeError(f"retries must be int, not {type(retries).__name__}")
+        raise TypeError("retries must be int, not %s" % type(retries).__name__)
 
     email_credentials = get_credentials()
 
@@ -46,7 +46,7 @@ def send_email(destinations, subject, message, name=None, retries=5):
     msg = MIMEMultipart()
 
     if name:
-        msg["From"] = f"{name} <{email_credentials.username}>"
+        msg["From"] = "%s <%s>" % (name, email_credentials.username)
     else:
         msg["From"] = email_credentials.username
 

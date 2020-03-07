@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from enum import Enum, auto
+from enum import Enum
 from unittest import mock
 
 import pytest
@@ -8,12 +8,12 @@ from lens_db.src.scanner import scan
 
 
 class ScanCode(Enum):
-    no_entries = auto()
-    not_sent = auto()
-    day_after_tomorrow = auto()
-    tomorrow = auto()
-    today = auto()
-    expired = auto()
+    no_entries = 1
+    not_sent = 2
+    day_after_tomorrow = 3
+    tomorrow = 4
+    today = 5
+    expired = 6
 
 
 class TestScan:
@@ -68,7 +68,6 @@ class TestScan:
         elif expect == ScanCode.expired:
             send_email.assert_called_once()
             assert "sending email (expired)\n" in caplog.text
-
 
     @mock.patch("lens_db.src.scanner.DISABLED", True)
     def test_disabled(self, mocks, caplog):
