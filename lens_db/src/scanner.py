@@ -1,10 +1,9 @@
 import logging
 from datetime import timedelta
 
-from allo_mail import send_email
-
 from .config import ADMIN_EMAIL, DISABLED, LENS_DURABILITY_DELTA
 from .core import Lens
+from .email import send_email
 from .utils import today_date
 
 logger = logging.getLogger(__name__)
