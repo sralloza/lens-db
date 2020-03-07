@@ -1,8 +1,7 @@
 import logging
-import smtplib
-import socket
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from smtplib import SMTP, SMTPException
 
 from .credentials import get_credentials
 
@@ -16,9 +15,9 @@ def send_email(destinations, subject, message, name=None, retries=5):
 
     Args:
         destinations (list or str): destination or list of destinations of the email.
-        subject (str): subject of the email
-        message (str): message of the email..
-        name (str): name of the sender (only needed in same cases).
+        subject (str): subject of the email.
+        message (str): message of the email.
+        name (str): alias for the sender (optional).
         retries (int): retries in case of error.
 
     Returns:
@@ -42,9 +41,7 @@ def send_email(destinations, subject, message, name=None, retries=5):
     )
 
     if isinstance(destinations, str):
-        destinations = [
-            destinations,
-        ]
+        destinations = [destinations]
 
     msg = MIMEMultipart()
 
@@ -53,6 +50,8 @@ def send_email(destinations, subject, message, name=None, retries=5):
     else:
         msg["From"] = email_credentials.username
 
+    # If destinations is set like msg["To"], only the first destination will
+    # receive the email, the rest no.
     msg["To"] = ", ".join(destinations)
     msg["Subject"] = subject
 
@@ -61,18 +60,18 @@ def send_email(destinations, subject, message, name=None, retries=5):
 
     while retries > 0:
         try:
-            server = smtplib.SMTP("smtp.gmail.com", 587)
-        except (smtplib.SMTPConnectError, socket.gaierror):
+            server = SMTP("smtp.gmail.com", 587)
+
+            server.starttls()
+            server.login(email_credentials.username, email_credentials.password)
+
+            server.sendmail(email_credentials.username, destinations, msg.as_string())
+            server.quit()
+            return True
+        except SMTPException as exc:
             retries -= 1
-            logger.warning("SMTP Connection Error")
+            logger.warning("SMTP Error (%s): %s", type(exc).__name__, exc)
             continue
-
-        server.starttls()
-        server.login(email_credentials.username, email_credentials.password)
-
-        server.sendmail(email_credentials.username, destinations, msg.as_string())
-        server.quit()
-        return True
 
     logger.critical("Retries exceeded")
     return False
