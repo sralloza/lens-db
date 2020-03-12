@@ -2,26 +2,61 @@ import argparse
 import sys
 
 from .core import Lens
+from .credentials import save_credentials
 from .exceptions import BaseLensDBError
 from .scanner import scan
 from .utils import exception_exit
 
 __all__ = ["main", "get_options"]
 
+HELPS = {
+    "now": "Open lens today",
+    "days": "Days after lens were opened",
+    "scan": "Scan and send email report if needed",
+    "last": "Get timestamp of last entry",
+    "from-str": "Load date from str in format YYYY-MM-DD",
+    "list": "List database",
+    "credentials": "Sets the credentials for sending emails",
+    "username": "Username to send the email from",
+    "password": "Password associated to the username",
+    "disable": "disable scan (if it was enabled)",
+    "enable": "enable scan (if it was disabled)",
+}
+
+
+def get_help(x):
+    return HELPS.get(x, "ERROR (%r)" % x)
+
 
 def get_options(args=None):
     """Returns the CLI arguments parsed."""
     parser = argparse.ArgumentParser("lens-db")
-    parser.add_argument("-now", "-today", action="store_true", help="open lens today")
-    parser.add_argument(
-        "-days", type=int, help="days after lens were opened", metavar="days"
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser("now", help=get_help("now"))
+
+    days_subparser = subparsers.add_parser("days", help=get_help("days"))
+    days_subparser.add_argument("days", type=int, help=get_help("days"), metavar="days")
+
+    subparsers.add_parser("scan", help=get_help("scan"))
+
+    subparsers.add_parser("last", help=get_help("last"))
+
+    from_str_subparser = subparsers.add_parser("from-str", help=get_help("from-str"))
+    from_str_subparser.add_argument(
+        "string", type=str, help=get_help("from-str"), metavar="str",
     )
-    parser.add_argument(
-        "-scan", action="store_true", help="scan and send email report if needed"
+
+    subparsers.add_parser("list", help=get_help("list"))
+
+    credentials_parser = subparsers.add_parser(
+        "credentials", help=get_help("credentials")
     )
-    parser.add_argument("-last", action="store_true", help="get timestamp of last ")
-    parser.add_argument("-from-str", type=str, help="load date from str", metavar="str")
-    parser.add_argument("-list", action="store_true", help="list database")
+    credentials_parser.add_argument("username", help=get_help("username"))
+    credentials_parser.add_argument("password", help=get_help("password"))
+
+    subparsers.add_parser("disable", help=get_help("disable"))
+    subparsers.add_parser("enable", help=get_help("enable"))
 
     return parser.parse_args(args)
 
@@ -41,23 +76,28 @@ def _main():
 
     options = get_options()
 
-    if options.scan:
+    if options.command == "scan":
         return scan()
 
-    if options.days:
+    if options.command == "days":
         return Lens.add(delta_days=options.days)
 
-    if options.now:
+    if options.command == "now":
         return Lens.add(delta_days=0)
 
-    if options.from_str:
-        return Lens.add_custom(options.from_str)
+    if options.command == "from-str":
+        return Lens.add_custom(options.string)
 
-    if options.list:
+    if options.command == "list":
         exit(Lens.list())
 
-    if options.last:
+    if options.command == "last":
         last = Lens.get_last()
         if last is None:
             exit("No lens in database")
         exit("Last lens opened on %r" % last.strftime("%Y-%m-%d"))
+
+    if options.command == "credentials":
+        save_credentials(username=options.username, password=options.password)
+        return
+
