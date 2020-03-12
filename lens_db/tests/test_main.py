@@ -75,126 +75,210 @@ class TestGetOptions:
             with pytest.raises(SystemExit):
                 get_options(["credentials"])
 
+    def test_disable(self):
+        opt = get_options(["disable"])
+        assert opt.command == "disable"
+
+    def test_enable(self):
+        opt = get_options(["enable"])
+        assert opt.command == "enable"
+
+    def test_status(self):
+        opt = get_options(["status"])
+        assert opt.command == "status"
+
 
 class TestHiddenMain:
     @pytest.fixture
     def mocks(self):
-        scan_mock = mock.patch("lens_db.src.main.scan").start()
-        options_mock = mock.patch("lens_db.src.main.get_options").start()
-        lens_mock = mock.patch("lens_db.src.main.Lens").start()
-        creds_mock = mock.patch("lens_db.src.main.save_credentials").start()
+        scan_m = mock.patch("lens_db.src.main.scan").start()
+        options_m = mock.patch("lens_db.src.main.get_options").start()
+        lens_m = mock.patch("lens_db.src.main.Lens").start()
+        creds_m = mock.patch("lens_db.src.main.save_credentials").start()
+        dis_m = mock.patch("lens_db.src.main.disable").start()
+        en_m = mock.patch("lens_db.src.main.enable").start()
+        st_m = mock.patch("lens_db.src.main.show_status").start()
 
-        yield scan_mock, options_mock, lens_mock, creds_mock
+        yield scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m
 
         mock.patch.stopall()
 
     def test_scan(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(command="scan")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="scan")
         _main()
 
-        scan_mock.assert_called_once_with()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_not_called()
+        scan_m.assert_called_once_with()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_days(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(days=5, command="days")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(days=5, command="days")
 
         _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_called_once_with(delta_days=5)
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_called_once_with(delta_days=5)
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_now(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(command="now")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="now")
         _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_called_once_with(delta_days=0)
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_called_once_with(delta_days=0)
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_from_str(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(string="some-str", command="from-str")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(string="some-str", command="from-str")
         _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_called_once_with("some-str")
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_called_once_with("some-str")
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_list(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(command="list")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="list")
 
         with pytest.raises(SystemExit):
             _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_called_once_with()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_called_once_with()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_last(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(command="last")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="last")
 
         with pytest.raises(SystemExit):
             _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_called_once_with()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_called_once_with()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_last_empty(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(command="last")
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="last")
 
-        lens_mock.get_last.return_value = None
+        lens_m.get_last.return_value = None
 
         with pytest.raises(SystemExit, match="No lens"):
             _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_called_once_with()
-        creds_mock.assert_not_called()
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_called_once_with()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
 
     def test_credentials(self, mocks):
-        scan_mock, options_mock, lens_mock, creds_mock = mocks
-        options_mock.return_value = Namespace(
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(
             command="credentials", username="-user-", password="-pass-"
         )
 
         _main()
 
-        scan_mock.assert_not_called()
-        lens_mock.add.assert_not_called()
-        lens_mock.add_custom.assert_not_called()
-        lens_mock.list.assert_not_called()
-        lens_mock.get_last.assert_not_called()
-        creds_mock.assert_called_once_with(username="-user-", password="-pass-")
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_called_once_with(username="-user-", password="-pass-")
+
+    def test_disable(self, mocks):
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="disable")
+
+        _main()
+
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_called()
+        en_m.assert_not_called()
+        st_m.assert_not_called()
+
+    def test_enable(self, mocks):
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="enable")
+
+        _main()
+
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_called()
+        st_m.assert_not_called()
+
+    def test_show_status(self, mocks):
+        scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m = mocks
+        options_m.return_value = Namespace(command="status")
+
+        _main()
+
+        scan_m.assert_not_called()
+        lens_m.add.assert_not_called()
+        lens_m.add_custom.assert_not_called()
+        lens_m.list.assert_not_called()
+        lens_m.get_last.assert_not_called()
+        creds_m.assert_not_called()
+        dis_m.assert_not_called()
+        en_m.assert_not_called()
+        st_m.assert_called()
 
 
 @mock.patch("lens_db.src.main._main")

@@ -4,7 +4,7 @@ import sys
 from .core import Lens
 from .credentials import save_credentials
 from .exceptions import BaseLensDBError
-from .scanner import scan
+from .scanner import disable, enable, scan, show_status
 from .utils import exception_exit
 
 __all__ = ["main", "get_options"]
@@ -21,6 +21,7 @@ HELPS = {
     "password": "Password associated to the username",
     "disable": "disable scan (if it was enabled)",
     "enable": "enable scan (if it was disabled)",
+    "status": "show if scan is enabled or not",
 }
 
 
@@ -57,6 +58,8 @@ def get_options(args=None):
 
     subparsers.add_parser("disable", help=get_help("disable"))
     subparsers.add_parser("enable", help=get_help("enable"))
+
+    subparsers.add_parser("status", help=get_help("status"))
 
     return parser.parse_args(args)
 
@@ -101,3 +104,14 @@ def _main():
         save_credentials(username=options.username, password=options.password)
         return
 
+    if options.command == "enable":
+        enable()
+        return
+
+    if options.command == "disable":
+        disable()
+        return
+
+    if options.command == "status":
+        show_status()
+        return
