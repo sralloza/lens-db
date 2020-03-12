@@ -1,10 +1,12 @@
 import logging
 from datetime import timedelta
 
-from allo_mail import send_email
+from colorama import Fore
 
-from .config import ADMIN_EMAIL, DISABLED, LENS_DURABILITY_DELTA
+from .config import ADMIN_EMAIL, DISABLED, DISABLED_PATH, LENS_DURABILITY_DELTA
 from .core import Lens
+from .email import send_email
+from .exceptions import AlreadyDisabledError, AlreadyEnabledError
 from .utils import today_date
 
 logger = logging.getLogger(__name__)
@@ -77,3 +79,24 @@ def scan():
     logger.debug(
         "%d days left with current lens", LENS_DURABILITY_DELTA.days - delta.days
     )
+
+
+def disable():
+    if DISABLED_PATH.exists():
+        raise AlreadyDisabledError("Scan is already disabled")
+
+    DISABLED_PATH.touch()
+
+
+def enable():
+    if not DISABLED_PATH.exists():
+        raise AlreadyEnabledError("Scan is already enabled")
+
+    DISABLED_PATH.unlink()
+
+
+def show_status():
+    if DISABLED_PATH.exists():
+        print(Fore.LIGHTYELLOW_EX + "Scanner is disabled" + Fore.RESET)
+    else:
+        print(Fore.LIGHTGREEN_EX + "Scanner is enabled" + Fore.RESET)

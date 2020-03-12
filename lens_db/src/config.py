@@ -16,4 +16,6 @@ ADMIN_EMAIL = "sralloza@gmail.com"
 
 LOGGING_PATH = Path(__file__).parent.parent.parent / "lens-db.log"
 DATABASE_PATH = Path(__file__).parent.parent.parent / "lens.db"
-DISABLED = Path(__file__).parent.parent.parent.joinpath("disabled").exists()
+DISABLED_PATH = Path(__file__).parent.parent.parent.joinpath(".disabled")
+DISABLED = DISABLED_PATH.exists()
+CREDENTIALS_PATH = Path(__file__).parent.with_name("data") / "credentials.json"

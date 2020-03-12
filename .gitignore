@@ -1,13 +1,16 @@
-# Specify filepatterns you want git to ignore.
-
 .idea/
 .vscode/
 __pycache__/
 venv/
 
+lens_db/data/
 lens.db
 sandbox.py
 
 *.log
 
-disabled
+.disabled
+
+# coverage
+htmlcov/
+.coverage

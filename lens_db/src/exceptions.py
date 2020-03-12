@@ -8,3 +8,15 @@ class AlreadyAddedError(BaseLensDBError):
 
 class InvalidDateError(BaseLensDBError):
     """Invalid date error."""
+
+
+class NoCredentialsError(BaseLensDBError):
+    """No credentials error."""
+
+
+class AlreadyDisabledError(BaseLensDBError):
+    """Already disabled error."""
+
+
+class AlreadyEnabledError(BaseLensDBError):
+    """Already enabled error."""
