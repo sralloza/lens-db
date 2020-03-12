@@ -6,6 +6,8 @@
 * Include code for sending emails (imported from allo_mail)
 * Use commands instead of arguments in cli. For example, use `now` instead of `-now`.
 * Add command to save the credentials: `credentials <username> <password>`. The credentials are stored in plain text, but encrypted using ROT13.
+* Add command to enable and disable scan: `disable` and `enable`.
+* Add command to show current status of scan (if it is enabled or not): `status`.
 
 ## [1.1.0] 2020-02-03
 ### Added
