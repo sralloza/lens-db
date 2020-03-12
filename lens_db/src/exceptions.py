@@ -12,3 +12,11 @@ class InvalidDateError(BaseLensDBError):
 
 class NoCredentialsError(BaseLensDBError):
     """No credentials error."""
+
+
+class AlreadyDisabledError(BaseLensDBError):
+    """Already disabled error."""
+
+
+class AlreadyEnabledError(BaseLensDBError):
+    """Already enabled error."""
