@@ -3,8 +3,10 @@ from enum import Enum
 from unittest import mock
 
 import pytest
+from colorama import Fore
 
-from lens_db.src.scanner import scan
+from lens_db.src.exceptions import AlreadyDisabledError, AlreadyEnabledError
+from lens_db.src.scanner import disable, enable, scan, show_status
 
 
 class ScanCode(Enum):
@@ -79,4 +81,47 @@ class TestScan:
         today_date.assert_not_called()
         send_email.assert_not_called()
 
-        assert "DISABLED flag is active, cancelling scan\n" in caplog.text
+
+@pytest.mark.parametrize("disabled", [True, False])
+@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+def test_disable(dis_path_mock, disabled):
+    dis_path_mock.exists.return_value = disabled
+
+    if disabled:
+        with pytest.raises(AlreadyDisabledError):
+            disable()
+        dis_path_mock.touch.assert_not_called()
+    else:
+        disable()
+        dis_path_mock.touch.assert_called_once()
+
+    dis_path_mock.exists.assert_called_once()
+
+@pytest.mark.parametrize("disabled", [True, False])
+@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+def test_enable(dis_path_mock, disabled):
+    dis_path_mock.exists.return_value = disabled
+
+    if not disabled:
+        with pytest.raises(AlreadyEnabledError):
+            enable()
+        dis_path_mock.unlink.assert_not_called()
+    else:
+        enable()
+        dis_path_mock.unlink.assert_called_once()
+
+    dis_path_mock.exists.assert_called_once()
+
+@pytest.mark.parametrize("disabled", [False, True])
+@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+def test_show_status(dis_path_mock, disabled, capsys):
+    dis_path_mock.exists.return_value = disabled
+    show_status()
+
+    captured = capsys.readouterr()
+    if disabled:
+        assert "disabled" in captured.out
+        assert Fore.LIGHTYELLOW_EX in captured.out
+    else:
+        assert "enabled" in captured.out
+        assert Fore.LIGHTGREEN_EX in captured.out
