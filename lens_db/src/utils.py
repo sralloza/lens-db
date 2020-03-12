@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from colorama import Fore
+
 __all__ = ["today_date", "exception_exit"]
 
 
@@ -19,13 +21,14 @@ def exception_exit(exception):
 
     """
 
-
     try:
         raise exception
     except TypeError as exc:
-        if exc.args == ("exceptions must derive from BaseException", ):
+        if exc.args == ("exceptions must derive from BaseException",):
             raise TypeError("exception should be a subclass of Exception") from exc
     except Exception:
         pass
 
-    exit("%s: %s" % (exception.__class__.__name__, ", ".join(exception.args)))
+    message = "%s: %s" % (exception.__class__.__name__, ", ".join(exception.args))
+    message = Fore.LIGHTRED_EX + message + Fore.RESET
+    exit(message)
