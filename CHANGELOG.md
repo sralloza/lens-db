@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Changed
+
+- Use `versioneer` to manage versions.
+
 ## [1.2.0] - 2020-10-25
 
 ### Added
@@ -20,5 +26,6 @@
 
 - Add way to disable scan: create a file named `disabled` at the root dir (next to `cli.py`, `requirements.txt` and `CHANGELOG.md`).
 
-[unreleased]: https://github.com/sralloza/lens-db/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/sralloza/lens-db/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/sralloza/lens-db/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/sralloza/lens-db/compare/v1.0.0...v1.1.0
