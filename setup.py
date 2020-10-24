@@ -1,4 +1,10 @@
 from setuptools import find_packages, setup
 
+import versioneer
 
-setup(name="lens_db", packages=find_packages())
+setup(
+    cmdclass=versioneer.get_cmdclass(),
+    name="lens_db",
+    packages=find_packages(),
+    version=versioneer.get_version(),
+)
