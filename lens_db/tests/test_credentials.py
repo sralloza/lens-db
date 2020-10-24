@@ -4,8 +4,7 @@ from unittest import mock
 import pytest
 
 from lens_db.src.config import CREDENTIALS_PATH
-from lens_db.src.credentials import (Credentials, get_credentials,
-                                     save_credentials)
+from lens_db.src.credentials import Credentials, get_credentials, save_credentials
 from lens_db.src.exceptions import NoCredentialsError
 
 encryption_data_test = (

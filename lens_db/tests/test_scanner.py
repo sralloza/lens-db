@@ -97,6 +97,7 @@ def test_disable(dis_path_mock, disabled):
 
     dis_path_mock.exists.assert_called_once()
 
+
 @pytest.mark.parametrize("disabled", [True, False])
 @mock.patch("lens_db.src.scanner.DISABLED_PATH")
 def test_enable(dis_path_mock, disabled):
@@ -111,6 +112,7 @@ def test_enable(dis_path_mock, disabled):
         dis_path_mock.unlink.assert_called_once()
 
     dis_path_mock.exists.assert_called_once()
+
 
 @pytest.mark.parametrize("disabled", [False, True])
 @mock.patch("lens_db.src.scanner.DISABLED_PATH")
