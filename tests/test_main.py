@@ -4,8 +4,8 @@ from unittest import mock
 import pytest
 
 import lens_db
-from lens_db.src.exceptions import BaseLensDBError
-from lens_db.src.main import _main, get_options, main
+from lens_db.exceptions import BaseLensDBError
+from lens_db.main import _main, get_options, main
 
 
 def modified_get_options(string: str):
@@ -91,13 +91,13 @@ class TestGetOptions:
 class TestHiddenMain:
     @pytest.fixture
     def mocks(self):
-        scan_m = mock.patch("lens_db.src.main.scan").start()
-        options_m = mock.patch("lens_db.src.main.get_options").start()
-        lens_m = mock.patch("lens_db.src.main.Lens").start()
-        creds_m = mock.patch("lens_db.src.main.save_credentials").start()
-        dis_m = mock.patch("lens_db.src.main.disable").start()
-        en_m = mock.patch("lens_db.src.main.enable").start()
-        st_m = mock.patch("lens_db.src.main.show_status").start()
+        scan_m = mock.patch("lens_db.main.scan").start()
+        options_m = mock.patch("lens_db.main.get_options").start()
+        lens_m = mock.patch("lens_db.main.Lens").start()
+        creds_m = mock.patch("lens_db.main.save_credentials").start()
+        dis_m = mock.patch("lens_db.main.disable").start()
+        en_m = mock.patch("lens_db.main.enable").start()
+        st_m = mock.patch("lens_db.main.show_status").start()
 
         yield scan_m, options_m, lens_m, creds_m, dis_m, en_m, st_m
 
@@ -281,13 +281,13 @@ class TestHiddenMain:
         st_m.assert_called()
 
 
-@mock.patch("lens_db.src.main._main")
+@mock.patch("lens_db.main._main")
 class TestRealMain:
     def test_normal(self, hidden_main_mock):
         main()
         hidden_main_mock.assert_called_once_with()
 
-    @mock.patch("lens_db.src.main.exception_exit")
+    @mock.patch("lens_db.main.exception_exit")
     def test_error(self, exc_exit_mock, hidden_main_mock):
         exc = BaseLensDBError("exc")
         hidden_main_mock.side_effect = exc

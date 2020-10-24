@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from lens_db.src.email import send_email
+from lens_db.email import send_email
 
 Interface = namedtuple("UnencryptedCredentials", ["username", "password"])
 
@@ -24,8 +24,8 @@ def message(request):
     return request.param
 
 
-@mock.patch("lens_db.src.email.SMTP")
-@mock.patch("lens_db.src.email.get_credentials")
+@mock.patch("lens_db.email.SMTP")
+@mock.patch("lens_db.email.get_credentials")
 def test_callings_1(get_creds_mock, smtp_mock, destinations, subject, message):
     get_creds_mock.return_value = Interface("--user--", "--pass--")
     raises = not (destinations and subject and message)
@@ -37,15 +37,15 @@ def test_callings_1(get_creds_mock, smtp_mock, destinations, subject, message):
         assert result
 
 
-@mock.patch("lens_db.src.email.SMTP")
-@mock.patch("lens_db.src.email.get_credentials")
+@mock.patch("lens_db.email.SMTP")
+@mock.patch("lens_db.email.get_credentials")
 def test_callings_2(get_creds_mock, smtp_mock):
     with pytest.raises(TypeError):
         send_email("destinations", "subject", "message", retries=2 + 2j)
 
 
-@mock.patch("lens_db.src.email.SMTP")
-@mock.patch("lens_db.src.email.get_credentials")
+@mock.patch("lens_db.email.SMTP")
+@mock.patch("lens_db.email.get_credentials")
 def test_normal(get_creds_mock, smtp_mock):
     get_creds_mock.return_value = Interface("--user--", "--pass--")
 
@@ -62,9 +62,9 @@ def test_normal(get_creds_mock, smtp_mock):
     server.quit.assert_called_once_with()
 
 
-@mock.patch("lens_db.src.email.logger")
-@mock.patch("lens_db.src.email.SMTP")
-@mock.patch("lens_db.src.email.get_credentials")
+@mock.patch("lens_db.email.logger")
+@mock.patch("lens_db.email.SMTP")
+@mock.patch("lens_db.email.get_credentials")
 def test_errors(get_creds_mock, smtp_mock, logger_mock):
     get_creds_mock.return_value = Interface("--user--", "--pass--")
     server = mock.MagicMock()
@@ -87,9 +87,9 @@ def test_errors(get_creds_mock, smtp_mock, logger_mock):
     assert logger_mock.warning.call_count == 3
 
 
-@mock.patch("lens_db.src.email.logger")
-@mock.patch("lens_db.src.email.SMTP")
-@mock.patch("lens_db.src.email.get_credentials")
+@mock.patch("lens_db.email.logger")
+@mock.patch("lens_db.email.SMTP")
+@mock.patch("lens_db.email.get_credentials")
 def test_critical_error(get_creds_mock, smtp_mock, logger_mock):
     get_creds_mock.return_value = Interface("--user--", "--pass--")
     smtp_mock.side_effect = SMTPConnectError(-1, "Custom call")

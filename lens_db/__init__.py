@@ -1,7 +1,7 @@
 from logging import DEBUG, basicConfig
 
 from ._version import get_versions
-from .src.config import LOGGING_PATH
+from .config import LOGGING_PATH
 
 __version__ = get_versions()["version"]
 del get_versions
