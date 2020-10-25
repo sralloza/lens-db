@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from lens_db.src.utils import today_date, exception_exit
+from lens_db.utils import today_date, exception_exit
 
 
 def test_today_date():

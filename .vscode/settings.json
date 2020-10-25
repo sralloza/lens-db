@@ -1,0 +1,10 @@
+{
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.testing.pytestArgs": [
+        "lens_db"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": false
+}

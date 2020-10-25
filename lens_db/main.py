@@ -45,7 +45,7 @@ def get_options(args=None):
 
     from_str_subparser = subparsers.add_parser("from-str", help=get_help("from-str"))
     from_str_subparser.add_argument(
-        "string", type=str, help=get_help("from-str"), metavar="str",
+        "string", type=str, help=get_help("from-str"), metavar="str"
     )
 
     subparsers.add_parser("list", help=get_help("list"))

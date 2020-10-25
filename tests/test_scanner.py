@@ -5,8 +5,8 @@ from unittest import mock
 import pytest
 from colorama import Fore
 
-from lens_db.src.exceptions import AlreadyDisabledError, AlreadyEnabledError
-from lens_db.src.scanner import disable, enable, scan, show_status
+from lens_db.exceptions import AlreadyDisabledError, AlreadyEnabledError
+from lens_db.scanner import disable, enable, scan, show_status
 
 
 class ScanCode(Enum):
@@ -21,9 +21,9 @@ class ScanCode(Enum):
 class TestScan:
     @pytest.fixture
     def mocks(self):
-        get_last = mock.patch("lens_db.src.scanner.Lens.get_last").start()
-        today_date = mock.patch("lens_db.src.scanner.today_date").start()
-        send_email = mock.patch("lens_db.src.scanner.send_email").start()
+        get_last = mock.patch("lens_db.scanner.Lens.get_last").start()
+        today_date = mock.patch("lens_db.scanner.today_date").start()
+        send_email = mock.patch("lens_db.scanner.send_email").start()
 
         yield get_last, today_date, send_email
 
@@ -71,7 +71,7 @@ class TestScan:
             send_email.assert_called_once()
             assert "sending email (expired)\n" in caplog.text
 
-    @mock.patch("lens_db.src.scanner.DISABLED", True)
+    @mock.patch("lens_db.scanner.DISABLED", True)
     def test_disabled(self, mocks, caplog):
         get_last, today_date, send_email = mocks
 
@@ -83,7 +83,7 @@ class TestScan:
 
 
 @pytest.mark.parametrize("disabled", [True, False])
-@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+@mock.patch("lens_db.scanner.DISABLED_PATH")
 def test_disable(dis_path_mock, disabled):
     dis_path_mock.exists.return_value = disabled
 
@@ -97,8 +97,9 @@ def test_disable(dis_path_mock, disabled):
 
     dis_path_mock.exists.assert_called_once()
 
+
 @pytest.mark.parametrize("disabled", [True, False])
-@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+@mock.patch("lens_db.scanner.DISABLED_PATH")
 def test_enable(dis_path_mock, disabled):
     dis_path_mock.exists.return_value = disabled
 
@@ -112,8 +113,9 @@ def test_enable(dis_path_mock, disabled):
 
     dis_path_mock.exists.assert_called_once()
 
+
 @pytest.mark.parametrize("disabled", [False, True])
-@mock.patch("lens_db.src.scanner.DISABLED_PATH")
+@mock.patch("lens_db.scanner.DISABLED_PATH")
 def test_show_status(dis_path_mock, disabled, capsys):
     dis_path_mock.exists.return_value = disabled
     show_status()

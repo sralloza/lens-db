@@ -3,10 +3,9 @@ from unittest import mock
 
 import pytest
 
-from lens_db.src.config import CREDENTIALS_PATH
-from lens_db.src.credentials import (Credentials, get_credentials,
-                                     save_credentials)
-from lens_db.src.exceptions import NoCredentialsError
+from lens_db.config import CREDENTIALS_PATH
+from lens_db.credentials import Credentials, get_credentials, save_credentials
+from lens_db.exceptions import NoCredentialsError
 
 encryption_data_test = (
     ("hello this is a test", "uryyb guvf vf n grfg"),
@@ -21,7 +20,7 @@ class TestCredentials:
         assert hasattr(creds, "enc_user")
         assert hasattr(creds, "enc_pass")
 
-    @mock.patch("lens_db.src.credentials.Credentials._encrypt")
+    @mock.patch("lens_db.credentials.Credentials._encrypt")
     def test_from_unencrypted(self, encrypt_mock):
         encrypt_mock.side_effect = lambda x: "enc-%s" % x
         creds = Credentials.from_unencrypted("-user-", "-pass-")
@@ -33,7 +32,7 @@ class TestCredentials:
         encrypt_mock.assert_any_call("-pass-")
         assert encrypt_mock.call_count == 2
 
-    @mock.patch("lens_db.src.credentials.CREDENTIALS_PATH")
+    @mock.patch("lens_db.credentials.CREDENTIALS_PATH")
     def test_load_from_file(self, creds_path_mock):
         data = json.dumps({"enc_user": "--user--", "enc_pass": "--pass--"})
         creds_path_mock.read_text.return_value = data
@@ -41,7 +40,7 @@ class TestCredentials:
         assert creds.enc_user == "--user--"
         assert creds.enc_pass == "--pass--"
 
-    @mock.patch("lens_db.src.credentials.Credentials._decrypt")
+    @mock.patch("lens_db.credentials.Credentials._decrypt")
     def test_decrypt(self, decrypt_mock):
         decrypt_mock.side_effect = lambda x: "dec-%s" % x
         creds = Credentials("enc_username", "enc_password")
@@ -64,7 +63,7 @@ class TestCredentials:
     def test__encrypt(self, normal, encrypted):
         assert Credentials._encrypt(normal) == encrypted
 
-    @mock.patch("lens_db.src.credentials.CREDENTIALS_PATH")
+    @mock.patch("lens_db.credentials.CREDENTIALS_PATH")
     def test_save(self, creds_path_mock):
         data = {"enc_user": "--user--", "enc_pass": "--pass--"}
         string_data = json.dumps(data)
@@ -78,8 +77,8 @@ class TestCredentials:
 
 
 @pytest.mark.parametrize("exist", [True, False])
-@mock.patch("lens_db.src.credentials.Credentials")
-@mock.patch("lens_db.src.credentials.CREDENTIALS_PATH")
+@mock.patch("lens_db.credentials.Credentials")
+@mock.patch("lens_db.credentials.CREDENTIALS_PATH")
 def test_get_credentials(creds_path_mock, creds_mock, exist):
     creds_path_mock.exists.return_value = exist
 
@@ -95,7 +94,7 @@ def test_get_credentials(creds_path_mock, creds_mock, exist):
     creds_mock.load_from_file.return_value.decrypt.assert_called_once_with()
 
 
-@mock.patch("lens_db.src.credentials.Credentials.from_unencrypted")
+@mock.patch("lens_db.credentials.Credentials.from_unencrypted")
 def test_save_credentials(creds_fu_mock):
     creds = save_credentials("-user-", "-pass-")
 
